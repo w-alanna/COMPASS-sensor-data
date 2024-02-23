@@ -31,3 +31,11 @@ out <- compute_na_sd("data\\COMPASS-dataset.csv")
 ggplot(out, aes(x=date, y=n_NA)) + geom_bar(stat="identity") + facet_wrap(~research_name, scales = "free")
 #plots with p_sd
 ggplot(out, aes(x=date, y=p_sd)) + geom_bar(stat = "identity") + facet_wrap(~research_name, scales = "free")
+
+
+compute_na_sd_forList <- function(folder) {
+  #gets the files from the folder
+  listOfFiles <- list.files(folder, pattern = "csv$", full.names = TRUE)
+  
+  compute_na_sd(listOfFiles) %>% return()
+}
