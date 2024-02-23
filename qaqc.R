@@ -9,6 +9,7 @@ library(dplyr)
 library(readr)
 library(ggplot2)
 compute_na_sd <- function(filename) {
+  message("Reading ", filename)
   #read in file
   compassData <- read_csv(filename)
   #add add column
@@ -37,5 +38,5 @@ compute_na_sd_forList <- function(folder) {
   #gets the files from the folder
   listOfFiles <- list.files(folder, pattern = "csv$", full.names = TRUE)
   
-  compute_na_sd(listOfFiles) %>% return()
+  lapply(listOfFiles, compute_na_sd)
 }
