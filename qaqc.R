@@ -33,10 +33,12 @@ ggplot(out, aes(x=date, y=n_NA)) + geom_bar(stat="identity") + facet_wrap(~resea
 #plots with p_sd
 ggplot(out, aes(x=date, y=p_sd)) + geom_bar(stat = "identity") + facet_wrap(~research_name, scales = "free")
 
-
+library(dplyr)
 compute_na_sd_forList <- function(folder) {
   #gets the files from the folder
   listOfFiles <- list.files(folder, pattern = "csv$", full.names = TRUE)
   
-  lapply(listOfFiles, compute_na_sd)
+  list <- lapply(listOfFiles, compute_na_sd)
+  
+  bind_rows(list) %>% return()
 }
