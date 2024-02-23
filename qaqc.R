@@ -6,16 +6,21 @@
 #fme20002
 
 library(dplyr)
+library(readr)
+library(ggplot2)
 compute_na_sd <- function(filename) {
   #read in file
-  compassData <- read.csv(filename)
+  compassData <- read_csv(filename)
+  #add add column
+  compassData <- compassData %>% mutate(date = as.Date(TIMESTAMP))
   
   #get the number of na rows and standard Deviation
   compassData %>% 
-    group_by(research_name) %>%
+    group_by(research_name, date) %>%
     summarise(n_NA = sum(is.na(value)), stdev = sd(value, na.rm = TRUE)) %>%
     return()
 }
 
 out <- compute_na_sd("data\\COMPASS-dataset.csv")
 
+ggplot(out, aes(x=date, y=n_NA)) + geom_bar(stat="identity") + facet_wrap(~research_name, scales = "free")
