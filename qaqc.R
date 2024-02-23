@@ -6,16 +6,16 @@
 #fme20002
 
 library(dplyr)
-summaryOfData <- function() {
+compute_na_sd <- function(filename) {
   #read in file
-  compassData <- read.csv("data\\COMPASS-dataset.csv")
+  compassData <- read.csv(filename)
   
-  #making dataframe
-  dataSummary <- data.frame(matrix(ncol = 3))
-  colnames(dataSummary) <- c('Names', 'numOfNA', 'StandardDeviation')
-
   #get the number of na rows and standard Deviation
-  dataSummary <- compassData %>% group_by(research_name) %>%
-    summarise(n_NA = sum(is.na(value)), stdev = sd(value, na.rm = TRUE))
+  compassData %>% 
+    group_by(research_name) %>%
+    summarise(n_NA = sum(is.na(value)), stdev = sd(value, na.rm = TRUE)) %>%
+    return()
 }
+
+out <- compute_na_sd("data\\COMPASS-dataset.csv")
 
