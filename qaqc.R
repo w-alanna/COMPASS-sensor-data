@@ -9,6 +9,7 @@ library(dplyr)
 library(readr)
 library(ggplot2)
 compute_na_sd <- function(filename) {
+  message("Reading ", filename)
   #read in file
   compassData <- read_csv(filename)
   #add add column
@@ -31,3 +32,13 @@ out <- compute_na_sd("data\\COMPASS-dataset.csv")
 ggplot(out, aes(x=date, y=n_NA)) + geom_bar(stat="identity") + facet_wrap(~research_name, scales = "free")
 #plots with p_sd
 ggplot(out, aes(x=date, y=p_sd)) + geom_bar(stat = "identity") + facet_wrap(~research_name, scales = "free")
+
+library(dplyr)
+compute_na_sd_forList <- function(folder) {
+  #gets the files from the folder
+  listOfFiles <- list.files(folder, pattern = "csv$", full.names = TRUE)
+  
+  list <- lapply(listOfFiles, compute_na_sd)
+  
+  bind_rows(list) %>% return()
+}
