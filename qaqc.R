@@ -16,7 +16,7 @@ compute_na_sd <- function(filename) {
   #get the number of na rows and standard Deviation
   compassData %>% 
     group_by(research_name, date) %>%
-    summarise(n_NA = sum(is.na(value)), average = mean(!is.na(value)), stdev = sd(value, na.rm = TRUE),
+    summarise(n_NA = sum(is.na(value)), average = mean(value, na.rm = TRUE), stdev = sd(value, na.rm = TRUE),
               p_sd = n_NA/(sum(!is.na(ID)))) %>%
               return()
 } 
