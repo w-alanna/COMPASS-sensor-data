@@ -21,10 +21,10 @@ compute_na_sd <- function(filename) {
   #get the number of na rows and standard Deviation
   compassData %>% 
     group_by(research_name, date) %>%
-    summarise(n_NA = sum(is.na(value)), stdev = sd(value, na.rm = TRUE),
-              p_sd = n_NA/(sum(!is.na(ID)))) %>%
-              return()
-} 
+    summarise(n_NA = sum(is.na(value)), average = mean(value, na.rm = TRUE), stdev = sd(value, na.rm = TRUE),
+              p_sd = n_NA/(sum(!is.na(ID))), site = "MSM", plot = substring(design_link,tail(unlist(gregexpr("MSM", design_link)))+4,nchar(design_link))) %>%
+    return()
+} #portion = tail(unlist(gregexpr("MSM", design_link)))
 
 out <- compute_na_sd("data\\COMPASS-dataset.csv")
 
