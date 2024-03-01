@@ -1,10 +1,5 @@
 # qaqc.R
 
-# ssh  hart187@compass.pnl.gov <- connect to COMPASS on powershell
-# /compass/datasets/fme_data_release/sensor_data/Level1/v0-9/ <- all the COMMPASS files
-# scp hart187@compass.pnl.gov:/compass/datasets/fme_data_release/sensor_data/Level1/v0-9/PTR_2022/PTR_20220701-20220731_L1_v0-9.csv .
-#fme20002
-
 library(dplyr)
 library(readr)
 library(ggplot2)
@@ -46,3 +41,25 @@ compute_na_sd_forList <- function(folder) {
   
   bind_rows(list) %>% return()
 }
+
+
+
+
+
+
+
+
+# ssh  hart187@compass.pnl.gov <- connect to COMPASS on powershell
+# /compass/datasets/fme_data_release/sensor_data/Level1/v0-9/ <- all the COMMPASS files
+# scp hart187@compass.pnl.gov:/compass/datasets/fme_data_release/sensor_data/Level1/v0-9/PTR_2022/PTR_20220701-20220731_L1_v0-9.csv .
+#fme20002
+
+
+#> site <- "MSM" > year <- "2023" > > folder <- file.path("data", paste(site, year, sep = "_""))
+#site <- "MSM" 
+
+#year <- "2023"
+
+#folder <- file.path("data", paste(site, year, sep = "_""))
+ 
+#then list.files(folder)...
