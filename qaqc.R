@@ -19,12 +19,13 @@ compute_na_sd <- function(filename, mainsite) {
               average = mean(value, na.rm = TRUE),
               stdev = sd(value, na.rm = TRUE),
               pct_NA = n_NA/(sum(!is.na(ID))),
-              mad = MAD,
               site = mainsite,
-              plot = substring(design_link,tail(unlist(gregexpr(mainsite, design_link)))+4,nchar(design_link))) %>%
+              plot = substring(design_link,tail(unlist(gregexpr(mainsite, design_link)))+4,nchar(design_link)),
+              outlier = if_else(value > average+MAD | value < average-MAD, plot, "N/A")) %>%
     return()
 } 
-
+# case_when(value>average+MAD | value<average+mad ~plot))
+#ifelse(value > average+MAD, plot, NULL)
 
 
 
