@@ -23,7 +23,7 @@ compute_na_sd <- function(filename, mainsite) {
               site = mainsite,
               plot = substring(design_link,tail(unlist(gregexpr(mainsite, design_link)))+4,nchar(design_link))) %>%
     return()
-} #portion = tail(unlist(gregexpr("MSM", design_link)))
+} 
 
 #out <- compute_na_sd("data\\MSM_2023\\MSM_20230101-20230131_L1_v0-9.csv", "MSM")
 
@@ -31,7 +31,6 @@ compute_na_sd <- function(filename, mainsite) {
 ggplot(out, aes(x=date, y=n_NA)) + geom_bar(stat="identity") + facet_wrap(~research_name, scales = "free")
 #plots with p_sd
 ggplot(out, aes(x=date, y=p_sd)) + geom_bar(stat = "identity") + facet_wrap(~research_name, scales = "free")
-
 
 
 
