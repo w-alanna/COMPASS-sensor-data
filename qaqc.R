@@ -20,7 +20,7 @@ compute_na_sd <- function(filename, mainsite) {
     summarise(n_NA = sum(is.na(value)),
               average = mean(value, na.rm = TRUE),
               stdev = sd(value, na.rm = TRUE),
-              p_sd = n_NA/(sum(!is.na(ID))),
+              pct_NA = n_NA/(sum(!is.na(ID))),
               site = mainsite,
               plot = substring(design_link,tail(unlist(gregexpr(mainsite, design_link)))+4,nchar(design_link))) %>%
     return()
