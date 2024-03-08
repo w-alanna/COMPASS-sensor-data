@@ -3,12 +3,13 @@
 library(dplyr)
 library(readr)
 library(ggplot2)
+library(lubridate)
 compute_na_sd <- function(filename, mainsite) {
   message("Reading ", filename)
   #read in file
   compassData <- read_csv(filename)
   #add add column
-  compassData <- compassData %>% mutate(date = as.Date(TIMESTAMP))
+  compassData <- compassData %>% mutate(date = as.Date(TIMESTAMP, format="%m/%d/%y"))
   
   #test
   test <- nrow(compassData$value)
@@ -24,6 +25,11 @@ compute_na_sd <- function(filename, mainsite) {
               plot = substring(design_link,tail(unlist(gregexpr(mainsite, design_link)))+4,nchar(design_link))) %>%
     return()
 } 
+
+
+
+
+
 
 #out <- compute_na_sd("data\\MSM_2023\\MSM_20230101-20230131_L1_v0-9.csv", "MSM")
 
