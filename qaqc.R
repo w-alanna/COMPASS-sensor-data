@@ -10,7 +10,7 @@ compute_na_sd <- function(filename, mainsite) {
   compassData <- read_csv(filename)
   #add add column
   compassData <- compassData %>% mutate(date = as.Date(TIMESTAMP, format="%m/%d/%y"))
-  compassData <- compassData %>% group_by(research_name, date) %>% mutate(MAD=mad(value, const=1, na.rm=TRUE))
+  compassData <- compassData %>% group_by(research_name, date) %>% mutate(MAD=mad(value, na.rm=TRUE))
   
   #get the number of na rows and standard Deviation
   compassData %>% 
