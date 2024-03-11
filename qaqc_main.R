@@ -1,14 +1,15 @@
+SLURM_ID <- 1
+
 
 library(dplyr)
-compute_na_sd_forList <- function(f_site, f_year) {
-  #gets name of folder
-  file = paste(f_site, f_year, sep = "_")
-  folder = paste("data\\", file, "\\", sep = "")
+compute_na_sd_forList <- function(SLURM_ID) {
+  #makes list of folders
+  dir_list = list.dirs("data")[-1]
+  #makes list of the files
+  listOfFiles <- list.files(dir_list[SLURM_ID], pattern = "csv$", full.names = TRUE)
   
-  #gets the files from the folder
-  listOfFiles <- list.files(folder, pattern = "csv$", full.names = TRUE)
   
-  list <- lapply(listOfFiles, compute_na_sd, mainsite=f_site)
+  list <- lapply(listOfFiles, compute_na_sd, mainsite="MSM")
 
   bind_rows(list) %>% return()
 }
