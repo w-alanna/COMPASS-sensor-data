@@ -30,16 +30,12 @@ compute_na_sd <- function(filename, mainsite) {
 
 
 
-
 #out <- compute_na_sd("data\\MSM_2023\\MSM_20230101-20230131_L1_v0-9.csv", "MSM")
 
 #plots with n_NA column
 ggplot(out, aes(x=date, y=n_NA)) + geom_bar(stat="identity") + facet_wrap(~research_name, scales = "free")
 #plots with p_sd
 ggplot(out, aes(x=date, y=p_sd)) + geom_bar(stat = "identity") + facet_wrap(~research_name, scales = "free")
-
-
-
 
 
 
