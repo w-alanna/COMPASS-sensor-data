@@ -1,4 +1,5 @@
 # qaqc.R
+# Author - Alanna Hart 2024
 
 library(dplyr)
 library(readr)
