@@ -2,12 +2,10 @@ library(ggplot2)
 library(dbplyr)
 library(readr)
 
-#add title to plots
-#add color to show outliers
-
-
+#Script that will create graphs using processed data
 post_process <- function(filename) {
-  #csv file
+  
+  #makes dataframe fro csv file
   fileData <- read_csv(filename)
   
   #site name
@@ -23,13 +21,13 @@ post_process <- function(filename) {
   #splits the data from file by research name
   research_name_list <-split(fileData,fileData$research_name)
 
-  #I think the script overrides folders
   #makes the plots
   for(rn in research_name_list) {
-
+    
+    #uses outlier to highlight outliers in plots
     rn$outlier <- outlier(rn$mad)
     if (all(is.na(rn$mad))) {
-      warning("Skipping", rn)
+      warning("Skipping", rn) #research names with no points are not plotted
       next
     }
     picture_name <- paste(subdir, rn$research_name[1], "_", siteName, ".png", sep="")
@@ -40,6 +38,7 @@ post_process <- function(filename) {
   }
 }
 
+#function that marks if points are outliers
 outlier <- function(x, probs=c(0.05, 0.95)) {
   q <- quantile(x, probs=probs, na.rm = TRUE)
   
@@ -47,19 +46,10 @@ outlier <- function(x, probs=c(0.05, 0.95)) {
   return(is_outlier)
 }
 
+#takes a folder and runs the post_process funtion on each folder
 post_process_main <- function(folder) {
   file_list <- list.files(folder, pattern="csv$", full.names=TRUE)
   lapply(file_list, post_process)
 }
 
-size_of_dataframe <- function(folder) {
-  file_list <- list.files(folder, pattern="csv$", full.names=TRUE)
-  sink("C:\\Users\\hart187\\size-crc2022")
-  for(filename in file_list) {
-    fileData <- read_csv(filename)
-    text <- paste(filename, " - ", fileData$site[1], fileData$date[1], nrow(fileData))
-    cat(text)
-  }
-  sink()
-}
 #"C:\\Users\\hart187\\output_dir\\example_output_1_10.csv"
