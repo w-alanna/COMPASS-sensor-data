@@ -8,17 +8,15 @@ compute_na_sd <- function(filename) {
 	fileData <- read_csv(filename, show_col_types = FALSE)
 	#adds column holding the date
 	fileData <- fileData %>% mutate(date = as.Date(TIMESTAMP, format="%m/%d/%y"))
-	#gets the name of the site the data is from
-	sitename <- substring(basename(filename), 1,3)
 	
 	#summarizes the data
   fileData %>% 
     group_by(research_name, date) %>%
-    summarise(n_NA = sum(is.na(value)),
-    average = mean(value, na.rm = TRUE),
-    stdev = sd(value, na.rm = TRUE),
-  	mad=mad(value, na.rm=TRUE),
-  	site=sitename,
+    summarise(n_NA = sum(is.na(Value)),
+    average = mean(Value, na.rm = TRUE),
+    stdev = sd(Value, na.rm = TRUE),
+  	mad=mad(Value, na.rm=TRUE),
+  	site=Site,
     pct_NA = n_NA/(sum(!is.na(ID))), .groups="drop") %>% 
   return()
 }
@@ -28,7 +26,7 @@ compute_na_sd <- function(filename) {
 send_dir_path <- function(slurm_id, index, out_dir) {
 	
   #gets list of the sub directories
-  all_data_dirs <- list.dirs("/compass/datasets/fme_data_release/sensor_data/Level1/v0-9", full.names=TRUE)[-1]
+  all_data_dirs <- list.dirs("/compass/datasets/fme_data_release/sensor_data/Level1/v1-0", full.names=TRUE)[-1]
   #chooses sub directory to be processed based on slurm_id
   my_dir <- all_data_dirs[slurm_id]
 	message("processing ", my_dir)
