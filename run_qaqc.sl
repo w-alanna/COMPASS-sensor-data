@@ -28,7 +28,9 @@
 
 . /etc/profile.d/modules.bash
 module purge
-module load r
+module load gcc/11.3.0
+module load pnnl_proxies/1.0
+module load r/4.4.0
 
 # Change directory into the example
 # Recommended: use renv to assure you have the correct virtual environment
