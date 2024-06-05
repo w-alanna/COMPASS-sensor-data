@@ -1,0 +1,8 @@
+research_name - name of the sensor/what data the sensor is collecting
+         date - date the data was collected
+         n_NA - number of rows missing data for a specfic date and data sensor
+      average - average of the data for specfic date and data sensor (excluding rows missing data)
+        stdev - standard deviation of the data for specfic date and data sensor (excluding rows missing data)
+          mad - median standard deviation of the data for specfic date and data sensor (excluding rows missing data)
+         site - name of the site the data was collected on
+       pct_NA - percentage of the rows missing data for a specfic date and data sensor
