@@ -2,12 +2,8 @@
 
 #SBATCH --account fme200002
 #SBATCH --nodes 1
-#SBATCH --ntasks-per-node 1
+#SBATCH --ntasks-per-node 30
 #SBATCH --time 00:05:00
-#SBATCH --job r_example
-#SBATCH --mail-user=alanna.hart@pnnl.gov
-#SBATCH --output=/compass/fme200002/ahart/COMPASS-sensor-data/example_%A_%a.out
-#SBATCH --error=/compass/fme200002/ahart/COMPASS-sensor-data/example_%A_%a.err
 
 # README -----------------------------------------------------------------------
 # Run the example script for parallizing an R script
@@ -15,15 +11,12 @@
 #
 # TO SUBMIT THE JOB:
 #
-# sbatch --array=1-20 /compass/fme200002/ahart/COMPASS-sensor-data/run_qaqc.sl
+# sbatch --array=1-30 /compass/fme200002/ahart/COMPASS-sensor-data/run_qaqc.sl
 #
 # TO CHECK PROGRESS:
 #
 # squeue
 #
-# When the job is done you should see four *.out and *.err files, one for 
-# each compute node the job was sent to; and 40 CSV data output files in 
-# the example_output_dir/, one for each invocation of do_the_thing() in the R script
 # ------------------------------------------------------------------------------
 
 . /etc/profile.d/modules.bash
