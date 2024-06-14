@@ -17,15 +17,15 @@ post_process <- function(filename) {
   
   #make subdirectory for the site
   subdir <- paste("C:\\Users\\hart187\\compass-plots\\", siteName, year, "\\", sep="")
-  
   #splits the data from file by research name
   research_name_list <-split(fileData,fileData$research_name)
 
   #makes the plots
   for(rn in research_name_list) {
-    
+    #divides dates into weeks
+    rn$week <- cut.Date(rn$date, breaks = "1 week", labels = FALSE)
     #uses outlier to highlight outliers in plots
-    rn$outlier <- outlier(rn$mad)
+    rn$outlier <- outlier(rn)
     if (all(is.na(rn$mad))) {
       warning("Skipping", rn) #research names with no points are not plotted
       next
@@ -38,12 +38,25 @@ post_process <- function(filename) {
   }
 }
 
+#mutate(week = cut.Date(date, breaks = "1 week", labels = FALSE)) %>% arrange(date)
+
 #function that marks if points are outliers
 outlier <- function(x, probs=c(0.05, 0.95)) {
-  q <- quantile(x, probs=probs, na.rm = TRUE)
+  week_list <- split(x, x$week)
+  full_outlier <- c()
+  for(w in week_list) {
+    data <- w$mad
+    quan <- quantile(data, probs=probs, na.rm = TRUE)
+    is_outlier <- data < quan[1] | data > quan[2]
+    full_outlier <- c(full_outlier, is_outlier)
+  }
+    #y <- x$mad
+    #q <- quantile(y, probs=probs, na.rm = TRUE)
+    
+    #is_outlier <- y < q[1] | y > q[2]
+    return(full_outlier)
   
-  is_outlier <- x < q[1] | x > q[2]
-  return(is_outlier)
+  
 }
 
 #takes a folder and runs the post_process funtion on each folder
@@ -52,4 +65,4 @@ post_process_main <- function(folder) {
   lapply(file_list, post_process)
 }
 
-#"C:\\Users\\hart187\\output_dir\\example_output_1_10.csv"
+#"C:\\Users\\hart187\\example_output_10_10.csv"
