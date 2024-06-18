@@ -30,9 +30,16 @@ post_process <- function(filename) {
       warning("Skipping", rn) #research names with no points are not plotted
       next
     }
-    picture_name <- paste(subdir, rn$research_name[1], "_", siteName, ".png", sep="")
+    #mad and outliers
+    picture_name <- paste(subdir, rn$research_name[1], "_mad_", siteName, ".png", sep="")
     rn %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + 
            geom_point() + ggtitle(paste(siteName,year,rn$research_name[1])) + labs(color = "Outliers") 
+    ggsave(picture_name, width = 7, height = 7)
+    message("Wrote ", picture_name)
+    #average with plots
+    picture_name <- paste(subdir, rn$research_name[1], "_aver_", siteName, ".png", sep="")
+    rn %>% ggplot(aes(date,average, na.rm = TRUE, color = factor(plot))) + 
+      geom_point() + ggtitle(paste(siteName,year,rn$research_name[1])) + labs(color = "Plot") 
     ggsave(picture_name, width = 7, height = 7)
     message("Wrote ", picture_name)
   }
@@ -65,4 +72,4 @@ post_process_main <- function(folder) {
   lapply(file_list, post_process)
 }
 
-#"C:\\Users\\hart187\\example_output_10_10.csv"
+#example_output_10_10.csv"

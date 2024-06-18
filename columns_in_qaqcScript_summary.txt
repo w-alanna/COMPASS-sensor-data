@@ -5,4 +5,5 @@ research_name - name of the sensor/what data the sensor is collecting
         stdev - standard deviation of the data for specfic date and data sensor (excluding rows missing data)
           mad - median standard deviation of the data for specfic date and data sensor (excluding rows missing data)
          site - name of the site the data was collected on
+         plot - name of the plot the data was collected on
        pct_NA - percentage of the rows missing data for a specfic date and data sensor
