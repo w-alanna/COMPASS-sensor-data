@@ -12,7 +12,7 @@ compute_na_sd <- function(filename) {
 	#summarizes the data
   fileData %>% 
     group_by(research_name, date) %>%
-    summarise(n_NA = sum(is.na(Value)),
+    reframe(n_NA = sum(is.na(Value)),
     average = mean(Value, na.rm = TRUE),
     stdev = sd(Value, na.rm = TRUE),
   	mad=mad(Value, na.rm=TRUE),
