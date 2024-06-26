@@ -17,7 +17,7 @@ compute_na_sd <- function(filename) {
     stdev = sd(Value, na.rm = TRUE),
   	mad=mad(Value, na.rm=TRUE),
   	site=Site,
-    plot=Plot,
+    if(is.logical(Plot)) {plot=substring(filename,5,5)} else{plot=Plot},
     pct_NA = n_NA/(sum(!is.na(ID))), .groups="drop") %>% 
   return()
 }
