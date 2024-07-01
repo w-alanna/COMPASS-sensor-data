@@ -14,7 +14,6 @@ post_process <- function(filename) {
   year <- fileData$date[1]
   year <- substring(year, 1, 4)
   
-  
   #make subdirectory for the site
   subdir <- paste("C:\\Users\\hart187\\compass-plots\\", siteName, year, "\\", sep="")
   #splits the data from file by research name
@@ -24,15 +23,17 @@ post_process <- function(filename) {
   for(rn in research_name_list) {
     #divides dates into weeks
     rn$week <- cut.Date(rn$date, breaks = "1 week", labels = FALSE)
-    #uses outlier to highlight outliers in plots
-    rn$outlier <- outlier(rn)
+    #filter out na values
     if (all(is.na(rn$mad))) {
       warning("Skipping", rn) #research names with no points are not plotted
       next
     }
+    rn_mad <- rn %>% filter(!is.na(mad))
+    #uses outlier to highlight outliers in plots
+    rn_mad$outlier <- outlier(rn_mad)
     #mad and outliers
     picture_name <- paste(subdir, rn$research_name[1], "_mad_", siteName, ".png", sep="")
-    rn %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + 
+    rn_mad %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + 
            geom_point() + ggtitle(paste(siteName,year,rn$research_name[1])) + labs(color = "Outliers") 
     ggsave(picture_name, width = 7, height = 7)
     message("Wrote ", picture_name)
@@ -45,8 +46,6 @@ post_process <- function(filename) {
   }
 }
 
-#mutate(week = cut.Date(date, breaks = "1 week", labels = FALSE)) %>% arrange(date)
-
 #function that marks if points are outliers
 outlier <- function(x, probs=c(0.05, 0.95)) {
   week_list <- split(x, x$week)
@@ -57,13 +56,7 @@ outlier <- function(x, probs=c(0.05, 0.95)) {
     is_outlier <- data < quan[1] | data > quan[2]
     full_outlier <- c(full_outlier, is_outlier)
   }
-    #y <- x$mad
-    #q <- quantile(y, probs=probs, na.rm = TRUE)
-    
-    #is_outlier <- y < q[1] | y > q[2]
     return(full_outlier)
-  
-  
 }
 
 #takes a folder and runs the post_process funtion on each folder
@@ -71,5 +64,3 @@ post_process_main <- function(folder) {
   file_list <- list.files(folder, pattern="csv$", full.names=TRUE)
   lapply(file_list, post_process)
 }
-
-#example_output_10_10.csv"
