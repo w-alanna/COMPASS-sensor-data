@@ -17,7 +17,7 @@ compute_na_sd <- function(filename) {
     stdev = sd(Value, na.rm = TRUE),
   	mad=mad(Value, na.rm=TRUE),
   	site=Site,
-    if(is.logical(Plot)) {plot=substring(filename,5,5)} else{plot=Plot},
+    plot=if(is.logical(Plot)) {substring(filename,5,5)} else{Plot},
     pct_NA = n_NA/(sum(!is.na(ID))), .groups="drop") %>% 
   return()
 }
@@ -27,7 +27,8 @@ compute_na_sd <- function(filename) {
 send_dir_path <- function(rank, index, out_dir) {
 	
   #gets list of the sub directories
-  all_data_dirs <- list.dirs("/compass/datasets/fme_data_release/sensor_data/Level1/v1-0", full.names=TRUE)[-1]
+  #all_data_dirs <- list.dirs("/compass/datasets/fme_data_release/sensor_data/Level1/v1-0", full.names=TRUE)[-1]
+  all_data_dirs <- list.dirs("C:/Users/hart187/TMP", full.names=TRUE)[-1]
   #chooses sub directory to be processed based on rank
   my_dir <- all_data_dirs[rank]
 	message("processing ", my_dir)
