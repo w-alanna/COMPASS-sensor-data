@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #SBATCH --account fme200002
-#SBATCH --nodes 1
-#SBATCH --ntasks-per-node 30
-#SBATCH --time 00:05:00
+#SBATCH --nodes 3
+#SBATCH --ntasks-per-node 144
+#SBATCH --time 00:10:00
 
 # README -----------------------------------------------------------------------
 # Run the example script for parallizing an R script
@@ -11,7 +11,7 @@
 #
 # TO SUBMIT THE JOB:
 #
-# sbatch --array=1-30 /compass/fme200002/ahart/COMPASS-sensor-data/run_qaqc.sl
+# sbatch /compass/fme200002/ahart/COMPASS-sensor-data/run_qaqc.sl
 #
 # TO CHECK PROGRESS:
 #
@@ -20,6 +20,7 @@
 # ------------------------------------------------------------------------------
 
 . /etc/profile.d/modules.bash
+. /etc/profile.d/modules.sh
 module purge
 module load gcc/11.3.0
 module load pnnl_proxies/1.0
@@ -29,9 +30,12 @@ module load r/4.4.0
 # Recommended: use renv to assure you have the correct virtual environment
 cd /compass/fme200002/ahart/COMPASS-sensor-data
 
+#push old files out
+mv ./output_dir/* ./process
+
 # R script to run 
 EXAMPLE_SCRIPT="/compass/fme200002/ahart/COMPASS-sensor-data/qaqc_compass.R"
 
 # run script with the slurm array index as the only argument to the script 
-Rscript $EXAMPLE_SCRIPT $SLURM_ARRAY_TASK_ID
+srun Rscript $EXAMPLE_SCRIPT $SLURM_ARRAY_TASK_ID
 
