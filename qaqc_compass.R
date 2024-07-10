@@ -27,7 +27,7 @@ compute_na_sd <- function(filename) {
 send_dir_path <- function(rank, index, out_dir) {
   #gets list of the sub directories
   #all_data_dirs <- list.dirs("/compass/datasets/fme_data_release/sensor_data/Level1/v1-0", full.names=TRUE)[-1]
-  all_data_dirs <- list.dirs("C:/Users/hart187/TMP", full.names=TRUE)[-1]
+  all_data_dirs <- list.dirs("C:/Users/hart187/COMPASS_folders", full.names=TRUE)[-1]
   #chooses sub directory to be processed based on rank
   my_dir <- all_data_dirs[rank]
 	message("processing ", my_dir)
@@ -37,10 +37,8 @@ send_dir_path <- function(rank, index, out_dir) {
 	#sends the files to the compute_na_sd function to be processed
 	list_files <- lapply(files_in_dir, compute_na_sd)
 	finish_files <- bind_rows(list_files)	
-	#get site
-	site_name <- finish_files$site[1]
   # write results to CSV
-  out_file <- file.path(out_dir, paste0("example_output_", rank, "_", index, "_", site_name, ".csv"))
+  out_file <- file.path(out_dir, paste0("example_output_", rank, "_", index, "_", finish_files$site[1], ".csv"))
   write.csv(finish_files, out_file, row.names = FALSE)
 	message("wrote out file ", out_file)
 }

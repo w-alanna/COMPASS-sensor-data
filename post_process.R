@@ -37,10 +37,25 @@ post_process <- function(filename) {
            geom_point() + ggtitle(paste(siteName,year,rn$research_name[1])) + labs(color = "Outliers") 
     ggsave(picture_name, width = 7, height = 7)
     message("Wrote ", picture_name)
+    
     #average with plots
     picture_name <- paste(subdir, rn$research_name[1], "_aver_", siteName, ".png", sep="")
     rn %>% ggplot(aes(date,average, na.rm = TRUE, color = factor(plot))) + 
-      geom_point() + ggtitle(paste(siteName,year,rn$research_name[1])) + labs(color = "Plot") 
+      geom_smooth() + ggtitle(paste(siteName,year,rn$research_name[1])) + labs(color = "Plot") 
+    ggsave(picture_name, width = 7, height = 7)
+    message("Wrote ", picture_name)
+    
+    #standard deviation
+    picture_name <- paste(subdir, rn$research_name[1], "_std_", siteName, ".png", sep="")
+    rn %>% ggplot(aes(date,stdev, na.rm = TRUE, color = factor(plot))) + 
+      geom_line() + ggtitle(paste(siteName,year,rn$research_name[1])) + labs(color = "Plot") 
+    ggsave(picture_name, width = 7, height = 7)
+    message("Wrote ", picture_name)
+    
+    #pct_NA
+    picture_name <- paste(subdir, rn$research_name[1], "_NA_", siteName, ".png", sep="")
+    rn %>% ggplot(aes(date,pct_NA, na.rm = TRUE)) + 
+      geom_bar(stat = "identity") + facet_wrap(vars(plot)) + ggtitle(paste(siteName,year,rn$research_name[1])) + labs(color = "Plot") 
     ggsave(picture_name, width = 7, height = 7)
     message("Wrote ", picture_name)
   }
