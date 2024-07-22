@@ -33,8 +33,8 @@ post_process <- function(filename) {
     rn_mad$outlier <- outlier(rn_mad)
     #mad and outliers
     picture_name <- paste(subdir, rn$research_name[1], "_mad_", siteName, ".png", sep="")
-    rn_mad %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + 
-           geom_point() + ggtitle(paste(siteName,year,rn$research_name[1])) + labs(color = "Outliers") 
+    rn_mad %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + geom_point() +
+      scale_y_continuous(name="emdian absolute deviation") + ggtitle(paste(siteName,year,rn$research_name[1])) + labs(color = "Outliers") 
     ggsave(picture_name, width = 7, height = 7)
     message("Wrote ", picture_name)
     
@@ -47,8 +47,8 @@ post_process <- function(filename) {
     
     #standard deviation
     picture_name <- paste(subdir, rn$research_name[1], "_std_", siteName, ".png", sep="")
-    rn %>% ggplot(aes(date,stdev, na.rm = TRUE, color = factor(plot))) + 
-      geom_line() + ggtitle(paste(siteName,year,rn$research_name[1])) + labs(color = "Plot") 
+    rn %>% ggplot(aes(date,stdev, na.rm = TRUE, color = factor(plot))) + geom_line() +
+      scale_y_continuous(name="standard deviation") + ggtitle(paste(siteName,year,rn$research_name[1])) + labs(color = "Plot") 
     ggsave(picture_name, width = 7, height = 7)
     message("Wrote ", picture_name)
     
