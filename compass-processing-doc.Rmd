@@ -36,11 +36,33 @@ print(head(b))
 - *(How data is Stored; LOTS of data)*
 
 ## Processing
+Due to the large amount of data COMPASS-FME generates, it can be difficult to handle.  Using the HPC and R scripts, COMPASS-FME data is summarized into a more manageable size.
+
 ### HPC
-- Explain how the HPC works
+High Processing Computing (HPC), is a way to processing data at high speeds.  It can be done through computer clustering.  A computer cluster is a group of computers that work together.  It speeds up the processing time because they work in parallel.  Because of the amount of data that needed to be summarized, clustering computing was needed to run the script quickly.
+
+To run the scripts on the cluster, we used SLURM, also known as Simple Linux Utility for Resource Management.  SLURM is used to schedule and allocate resources for jobs run on computer clusters.  I wrote a slurm script to call the send_dir_path function.  Each directory instance is run on a separate node in parallel.
+
+
+- **NO FIGURES YET**
+- *Explain HPC, edit writing*
 
 ### Summarizing script
-- talk about script that summarizes data
+To process the data, two R scripts are used.  The first script, called send_dir_path, sends each csv file in a folder to a second script called compute_na_sd.  This script summarizes the data by grouping data points of the same date and research name.  The data is then summarized into the following columns *(I might change the bullet points to a table)*: 
+
+- research_name: Name of the sensor
+- site: Abbreviation of the site the sensor is located
+- date: date and time the data was recorded
+- average: average value of data sensors of the same date and research_name
+- mad: median standard deviation of data sensors of the same date and research_name
+- stdev: standard deviation of data sensors of the same date and research_name
+- n_NA: number of data sensors of the same date and research_name missing a value
+pct_NA: percentage of data sensors of the same date and research_name missing a value
+
+The new dataframe is then returned to send_dir_path.  Once all the dataframes created from the folder are returned, they are combined and exported into a new csv file.
+
+- *talk about script that summarizes data*
+- **NO FIGURES YET**
 
 ## Post-Processing {.tabset}
 - explain purpose of post processing script
