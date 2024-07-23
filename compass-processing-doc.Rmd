@@ -72,9 +72,14 @@ The new dataframe is then returned to send_dir_path.  Once all the dataframes cr
 - **NO FIGURES YET**
 
 ## Post-Processing {.tabset}
-- explain purpose of post processing script
-- different graph types
-- Explain the basis of how the graphs are set up
+The purpose of the post-processing scripts is to help visualize the summarized data.  We can see trends and unexpected results.  There are four types of graphs, shown in the tabs below.  The graphs are made using two R functions, post_process_main and post_process.  post_process_main takes the folders holding all the files with summarized data and sends them to post_process.  The post_process function then reads the csv file and makes the graphs.  There is one of each type of graph for every research_name and year.
+
+----------
+CRC 2022 gw_act_cond
+C:/Users/hart187/output_dir_temp/example_output_1_10_CRC.csv
+PTR 2023 gw_temperature
+C:/Users/hart187/output_dir_temp/example_output_20_10_PTR.csv
+----------
 
 ### Average
 - Explain setup of graphs (split by plot and geom_smooth)
