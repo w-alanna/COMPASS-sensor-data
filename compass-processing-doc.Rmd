@@ -14,16 +14,26 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Background
 ### COMPASS-FME Overview
-COMPASS-FME is a project studying how coastal ecosystems respond to stress from rising sea levels and storm surges.  The project collects data from seven different sites in the Chesapeake Bay and Western Lake Erie Basin.  __The sites all have differing salinity levels and soil types to look a wide range of ecosystems.__  Each site has three plots: upland, transition zone, and wetland area.
+COMPASS-FME is a project studying how coastal ecosystems respond to stress from rising sea levels and storm surges.  The project collects data from seven different sites in the Chesapeake Bay and Western Lake Erie Basin.  The sites all have differing salinity levels and soil types, so there is a wide range of ecosystems.  Each site has three plots: upland, transition zone, and wetland area.
 
 <img src ="C:/Users/hart187/OneDrive - PNNL/Documents/compass-sites.png">
 
-In addition to multiple sites, COMPASS-FME uses multiple data sensors.  The sensors fall into one of the following: Weather(rain, temperature, etc), Soil (soil electrical conductivity, soil temperature, etc), Open Soil(water pressure, water salinity, etc), Ground Water(groundwater salinity, groundwater density, etc), or Vegetation(sapflow, etc).
+In addition to multiple sites, COMPASS-FME uses multiple data sensors.  The sensors fall into one of the following: 
 
-- *(What COMPASS is, Sites and Sensors)*
+- Weather (rain, temperature, etc)
+- Soil (soil electrical conductivity, soil temperature, etc)
+- Open Soil (water pressure, water salinity, etc)
+- Ground Water (groundwater salinity, groundwater density, etc)
+- Vegetation (sapflow, etc)
 
 ### Data
-COMPASS-FME generates over 3 million data per month.  That is a LOT of data.  The data is stored in folders separated by site and year.  Within these folders, there are several csv files holding the data.  The v1 version, the version the processing process is tailored too, has 12 columns.  The columns needed for processing are **Site, Plot, TIMESTAMP, Value, and research_name**.
+COMPASS-FME generates over 3 million data per month.  That is a LOT of data.  The data is stored in folders separated by site and year.  Within these folders, there are several csv files holding the data.  The v1 version, the version the processing process is tailored too, has 12 columns.  The columns needed for processing are: 
+
+- Site: Abbreviation of one of the seven sites
+- Plot: Abbreviation of one plots for a site
+- TIMESTAMP: date and time
+- Value: value the sensor collects
+- research_name: name of sensor
 
 ```{r v1 data, echo = FALSE, message=FALSE}
 library(readr)
@@ -31,9 +41,6 @@ b <- read_csv("C:/Users/hart187/COMPASS_folders/CRC_2022/CRC_TR_20220401-2022043
 
 print(head(b))
 ```
-
-
-- *(How data is Stored; LOTS of data)*
 
 ## Processing
 Due to the large amount of data COMPASS-FME generates, it can be difficult to handle.  Using the HPC and R scripts, COMPASS-FME data is summarized into a more manageable size.
@@ -67,6 +74,7 @@ The new dataframe is then returned to send_dir_path.  Once all the dataframes cr
 ## Post-Processing {.tabset}
 - explain purpose of post processing script
 - different graph types
+- Explain the basis of how the graphs are set up
 
 ### Average
 - Explain setup of graphs (split by plot and geom_smooth)
