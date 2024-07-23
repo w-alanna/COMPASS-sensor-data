@@ -1,0 +1,47 @@
+---
+title: "Processing of COMPASS-FME Data"
+author: "A Hart"
+date: "2024-07-23"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Background
+### COMPASS-FME Overview
+- What COMPASS is
+- Sites and Sensors
+
+### Data
+- How data is Stored
+- LOTS of data
+
+## Processing
+### HPC
+- Explain how the HPC works
+
+### Summarizing script
+- talk about script that summarizes data
+
+## Post-Processing {.tabset}
+- explain purpose of post processing script
+- different graph types
+
+### Average
+- Explain setup of graphs (split by plot and geom_smooth)
+
+### Median Stardard Deviation
+- Explain what mad is
+- explain setup and outliers function
+
+### Percentage of NA
+- explain the reason for computing this
+- setup
+
+### Standard Deviation
+- explain setup
