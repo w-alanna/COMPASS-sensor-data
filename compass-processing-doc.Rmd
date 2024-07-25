@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Background
 ### COMPASS-FME Overview
-COMPASS-FME is a project studying how coastal ecosystems respond to stress from rising sea levels and storm surges.  The project collects data from seven different sites in the Chesapeake Bay and Western Lake Erie Basin.  The sites all have differing salinity levels and soil types, so there is a wide range of ecosystems.  Each site has three plots: upland, transition zone, and wetland area.
+COMPASS-FME is a project studying how coastal ecosystems respond to stress from rising sea levels and storm surges.  The project collects data from seven different sites in the Chesapeake Bay and Western Lake Erie Basin.  The sites all have differing salinity levels and soil types, so the project has a range of ecosystems.  Each site has three plots: upland, transition zone, and wetland area.
 
 <img src ="C:/Users/hart187/OneDrive - PNNL/Documents/compass-sites.png">
 
@@ -27,13 +27,14 @@ In addition to multiple sites, COMPASS-FME uses multiple data sensors.  The sens
 - Vegetation (sapflow, etc)
 
 ### Data
-COMPASS-FME generates over 3 million data per month.  That is a LOT of data.  The data is stored in folders separated by site and year.  Within these folders, there are several csv files holding the data.  The v1 version, the version the processing process is tailored too, has 12 columns.  The columns needed for processing are: 
+COMPASS-FME generates over 3 million data per month.  That is a **lot** of data.  The data is stored in folders separated by site and year.  Within these folders, there are several csv files holding the data.  The v1 version, the version the processing process is tailored to, has 12 columns.  The columns needed for processing are: 
 
 - Site: Abbreviation of one of the seven sites
 - Plot: Abbreviation of one plots for a site
 - TIMESTAMP: date and time
 - Value: value the sensor collects
 - research_name: name of sensor
+- *(Should I make it a table instead of bullets??)*
 
 ```{r v1 data, echo = FALSE, message=FALSE}
 library(readr)
@@ -43,19 +44,18 @@ print(head(b))
 ```
 
 ## Processing
-Due to the large amount of data COMPASS-FME generates, it can be difficult to handle.  Using the HPC and R scripts, COMPASS-FME data is summarized into a more manageable size.
+Due to the large amount of data COMPASS-FME generates, it can be tough to handle all at once.  Using the HPC and R scripts, we can summarized the COMPASS-FME data to a more manageable size.
 
 ### HPC
-High Processing Computing (HPC), is a way to processing data at high speeds.  It can be done through computer clustering.  A computer cluster is a group of computers that work together.  It speeds up the processing time because they work in parallel.  Because of the amount of data that needed to be summarized, clustering computing was needed to run the script quickly.
+High Processing Computing (HPC) is a way to process data at high speeds.  One way to do this is through computer clustering.  A computer cluster is a group of computers that work together.  It speeds up the processing time because they work in parallel.  Because of the amount of data that needed to be summarized, cluster computing was needed to run the scripts quickly.
 
 To run the scripts on the cluster, we used SLURM, also known as Simple Linux Utility for Resource Management.  SLURM is used to schedule and allocate resources for jobs run on computer clusters.  I wrote a slurm script to call the send_dir_path function.  Each directory instance is run on a separate node in parallel.
 
 
 - **NO FIGURES YET**
-- *Explain HPC, edit writing*
 
 ### Summarizing script
-To process the data, two R scripts are used.  The first script, called send_dir_path, sends each csv file in a folder to a second script called compute_na_sd.  This script summarizes the data by grouping data points of the same date and research name.  The data is then summarized into the following columns *(I might change the bullet points to a table)*: 
+I used two R scripts to process the data.  The first script, called send_dir_path, sends each CSV file in a folder to a second script called compute_na_sd.  This script summarizes the data by grouping data points of the same date and research name.  The data is then summarized into the following columns *(I might change the bullet points to a table)*: 
 
 - research_name: Name of the sensor
 - site: Abbreviation of the site the sensor is located
@@ -66,19 +66,18 @@ To process the data, two R scripts are used.  The first script, called send_dir_
 - n_NA: number of data sensors of the same date and research_name missing a value
 pct_NA: percentage of data sensors of the same date and research_name missing a value
 
-The new dataframe is then returned to send_dir_path.  Once all the dataframes created from the folder are returned, they are combined and exported into a new csv file.
+The new data frame is then returned to send_dir_path.  Once all the data frames created from the folder are returned, they are combined and exported into a new csv file.
 
-- *talk about script that summarizes data*
 - **NO FIGURES YET**
 
 ## Post-Processing {.tabset}
-The purpose of the post-processing scripts is to help visualize the summarized data.  We can see trends and unexpected results.  There are four types of graphs, shown in the tabs below.  The graphs are made using two R functions, post_process_main and post_process.  post_process_main takes the folders holding all the files with summarized data and sends them to post_process.  The post_process function then reads the csv file and makes the graphs.  There is one of each type of graph for every research_name and year.
+The purpose of the post-processing scripts is to help visualize the summarized data.  We can see trends and unexpected results.  There are four types of graphs, shown in the tabs below.  The graphs are made using two R functions, post_process_main and post_process.  post_process_main takes the folders holding all the files with summarized data and sends them to post_process.  The post_process function then reads the CSV file and makes the graphs.  There is one of each type of graph for every research_name and year.
 
 ----------
+For the graphs 
+vvvv
 CRC 2022 gw_act_cond
-C:/Users/hart187/output_dir_temp/example_output_1_10_CRC.csv
 PTR 2023 gw_temperature
-C:/Users/hart187/output_dir_temp/example_output_20_10_PTR.csv
 ----------
 
 ### Average
