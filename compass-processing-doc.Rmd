@@ -29,22 +29,23 @@ In addition to multiple sites, COMPASS-FME uses multiple data sensors.  The sens
 ### Data
 COMPASS-FME generates over 3 million data per month.  That is a **lot** of data.  The data is stored in folders separated by site and year.  Within these folders, there are several csv files holding the data.  The v1 version, the version the processing process is tailored to, has 12 columns.  The columns needed for processing are: 
 
-- Site: Abbreviation of one of the seven sites
-- Plot: Abbreviation of one plots for a site
-- TIMESTAMP: date and time
-- Value: value the sensor collects
-- research_name: name of sensor
-- *(Should I make it a table instead of bullets??)*
+Column              | Description
+--------------------|----------------
+`Site`              | Abbreviation of one of the seven sites
+`Plot`              | Abbreviation of one plots for a site
+`TIMESTAMP`         | date and time
+`Value`             | value the sensor collects
+`research_name`     | name of sensor
 
 ```{r v1 data, echo = FALSE, message=FALSE}
 library(readr)
 b <- read_csv("C:/Users/hart187/COMPASS_folders/CRC_2022/CRC_TR_20220401-20220430_L1_v1-0.csv", show_col_types = FALSE)
 
-print(head(b))
+knitr::kable(head(b))
 ```
 
 ## Processing
-Due to the large amount of data COMPASS-FME generates, it can be tough to handle all at once.  Using the HPC and R scripts, we can summarized the COMPASS-FME data to a more manageable size.
+Due to the large amount of data COMPASS-FME generates, it can be tough to handle all at once.  Using the HPC and R scripts, we can summarize the COMPASS-FME data to a more manageable size.
 
 ### HPC
 High Processing Computing (HPC) is a way to process data at high speeds.  One way to do this is through computer clustering.  A computer cluster is a group of computers that work together.  It speeds up the processing time because they work in parallel.  Because of the amount of data that needed to be summarized, cluster computing was needed to run the scripts quickly.
@@ -53,25 +54,28 @@ To run the scripts on the cluster, we used SLURM, also known as Simple Linux Uti
 
 
 - **NO FIGURES YET**
+- **ADD MORE**
 
 ### Summarizing script
-I used two R scripts to process the data.  The first script, called send_dir_path, sends each CSV file in a folder to a second script called compute_na_sd.  This script summarizes the data by grouping data points of the same date and research name.  The data is then summarized into the following columns *(I might change the bullet points to a table)*: 
+During my internship, I used two R scripts to process the data.  The first script, called `send_dir_path`, sends each CSV file in a folder to a second script called `compute_na_sd`.  This script summarizes the data by grouping data points of the same date and research name.  The data is then summarized into the following columns: 
 
-- research_name: Name of the sensor
-- site: Abbreviation of the site the sensor is located
-- date: date and time the data was recorded
-- average: average value of data sensors of the same date and research_name
-- mad: median standard deviation of data sensors of the same date and research_name
-- stdev: standard deviation of data sensors of the same date and research_name
-- n_NA: number of data sensors of the same date and research_name missing a value
-pct_NA: percentage of data sensors of the same date and research_name missing a value
+Column          | Description
+----------------|----------------------
+`research_name` | Name of the sensor
+`site`          | Abbreviation of the site the sensor is located
+`date`          | date and time the data was recorded
+`average`       | average value of data sensors of the same date and research_name
+`mad`           | median standard deviation of data sensors of the same date and research_name
+`stdev`         | standard deviation of data sensors of the same date and research_name
+`n_NA`          | number of data sensors of the same date and research_name missing a value
+`pct_NA`        | percentage of data sensors of the same date and research_name missing a value
 
-The new data frame is then returned to send_dir_path.  Once all the data frames created from the folder are returned, they are combined and exported into a new csv file.
+The new data frame is then returned to `send_dir_path`.  Once all the data frames created from the folder are returned, they are combined and exported into a new csv file.
 
 - **NO FIGURES YET**
 
 ## Post-Processing {.tabset}
-The purpose of the post-processing scripts is to help visualize the summarized data.  We can see trends and unexpected results.  There are four types of graphs, shown in the tabs below.  The graphs are made using two R functions, post_process_main and post_process.  post_process_main takes the folders holding all the files with summarized data and sends them to post_process.  The post_process function then reads the CSV file and makes the graphs.  There is one of each type of graph for every research_name and year.
+The purpose of the post-processing scripts is to help visualize the summarized data.  We can see trends and unexpected results.  There are four types of graphs, shown in the tabs below.  The graphs are made using two R functions, `post_process_main` and `post_process`.  `post_process_main` takes the folders holding all the files with summarized data and sends them to `post_process`.  The post_process function then reads the CSV file and makes the graphs.  There is one of each type of graph for every research_name and year.
 
 ----------
 For the graphs 
@@ -93,3 +97,13 @@ PTR 2023 gw_temperature
 
 ### Standard Deviation
 - explain setup
+
+## Conclusion
+
+### Lessons Learned
+-Talked about learning compass
+-learning R and slurm
+
+### Improvements/Uses
+-Improvements
+-Uses
