@@ -37,7 +37,7 @@ Column              | Description
 `Value`             | value the sensor collects
 `research_name`     | name of sensor
 
-```{r v1 data, echo = FALSE, message=FALSE}
+```{r v1 data, echo = FALSE, message=FALSE, warning = FALSE}
 library(readr)
 b <- read_csv("C:/Users/hart187/COMPASS_folders/CRC_2022/CRC_TR_20220401-20220430_L1_v1-0.csv", show_col_types = FALSE)
 
@@ -85,18 +85,97 @@ PTR 2023 gw_temperature
 ----------
 
 ### Average
+The average graph shows the average value of the data points of the same date and plot, using `geom_smooth`.  `geom_smooth` is very similar to a line of best fit, but it curves with the data.
+
+```{r average, echo=FALSE,fig.width=4, fig.show='hold', warning = FALSE, message=FALSE}
+library(ggplot2)
+library(dbplyr)
+
+a <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/crc2022.csv")
+b <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/ptr2023.csv")
+
+a %>% ggplot(aes(date,average, na.rm = TRUE, color = factor(plot))) +
+      geom_smooth() + ggtitle(paste('CRC','2022','gw_act_cond')) + 
+      labs(color = "Plot") 
+b %>% ggplot(aes(date,average, na.rm = TRUE, color = factor(plot))) +
+      geom_smooth() + ggtitle(paste('PTR','2023','gw_temperature')) + 
+      labs(color = "Plot") 
+```
+
+
+ **Super bad explaination, need to think abotu how to word it**
 - Explain setup of graphs (split by plot and geom_smooth)
 
 ### Median Stardard Deviation
+Median standard deviation is a way to see how spread out a set of data is.  This measurement is useful because it allows us to see if the data points are consistent among the sensors.  These graphs show the median standard deviation of all the plots in a site for the year.
+Additionally, these graphs highlight outliers, with a function I made called `outlier`.  `outlier` highlights any data points in the graph that are higher than the 95 percent tile, and lower than the 5 percent tile per week.  It is done per week to ensure seasonal changes don't effect the results.
+
+
+```{r mad, echo=FALSE,fig.width=4, fig.show='hold', warning = FALSE, message=FALSE}
+library(ggplot2)
+library(dbplyr)
+source("~/GitHub/COMPASS-sensor-data/post_process.R")
+
+a <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/crc2022.csv")
+b <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/ptr2023.csv")
+
+a$week <- cut.Date(a$date, breaks = "1 week", labels = FALSE)
+#a_mad <- a %>% filter(!is.na(mad))
+#a_mad$outlier <- outlier(a_mad)
+
+b$week <- cut.Date(b$date, breaks = "1 week", labels = FALSE)
+#b_mad <- b %>% filter(!is.na(mad))
+#b_mad$outlier <- outlier(b_mad)
+
+#a_mad %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + geom_point() + scale_y_continuous(name="emdian absolute deviation") + ggtitle(paste('CRC','2022','gw_act_cond')) + labs(color = "Outliers") 
+
+#b_mad %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + geom_point() + scale_y_continuous(name="emdian absolute deviation") + ggtitle(paste('PTR','2023','gw_temperature')) + labs(color = "Outliers") 
+```
+
+- **Maybe show some of the outlier code??**
+- **needs editing**
 - Explain what mad is
 - explain setup and outliers function
 
 ### Percentage of NA
+The percentage of NA graphs show the percentage of NA values for group of data sensors using bars.  While this may not seem like a useful graph, it is very helpful in showing where data was lost.
+
+```{r pct_na, echo=FALSE,fig.width=4, fig.show='hold', warning = FALSE, message=FALSE}
+library(ggplot2)
+library(dbplyr)
+
+a <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/crc2022.csv")
+b <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/ptr2023.csv")
+
+a %>% ggplot(aes(date,pct_NA, na.rm = TRUE)) + 
+      geom_bar(stat = "identity") + facet_wrap(vars(plot)) +  ggtitle(paste('CRC','2022','gw_act_cond')) + labs(color = "Plot") 
+
+b %>% ggplot(aes(date,pct_NA, na.rm = TRUE)) + 
+      geom_bar(stat = "identity") + facet_wrap(vars(plot)) + ggtitle(paste('PTR','2023','gw_temperature')) + labs(color = "Plot") 
+
+```
+
 - explain the reason for computing this
 - setup
 
 ### Standard Deviation
+
 - explain setup
+
+```{r stdev, echo=FALSE,fig.width=4, fig.show='hold', warning = FALSE, message=FALSE}
+library(ggplot2)
+library(dbplyr)
+
+a <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/crc2022.csv")
+b <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/ptr2023.csv")
+
+a %>% ggplot(aes(date,stdev, na.rm = TRUE, color = factor(plot))) + 
+  geom_line() + scale_y_continuous(name="standard deviation") + ggtitle(paste('CRC','2022','gw_act_cond')) + labs(color = "Plot") 
+
+b %>% ggplot(aes(date,stdev, na.rm = TRUE, color = factor(plot))) + 
+  geom_line() + scale_y_continuous(name="standard deviation") + ggtitle(paste('PTR','2023','gw_temperature')) + labs(color = "Plot") 
+
+```
 
 ## Conclusion
 
