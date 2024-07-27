@@ -48,13 +48,22 @@ knitr::kable(head(b))
 Due to the large amount of data COMPASS-FME generates, it can be tough to handle all at once.  Using the HPC and R scripts, we can summarize the COMPASS-FME data to a more manageable size.
 
 ### HPC
-High Processing Computing (HPC) is a way to process data at high speeds.  One way to do this is through computer clustering.  A computer cluster is a group of computers that work together.  It speeds up the processing time because they work in parallel.  Because of the amount of data that needed to be summarized, cluster computing was needed to run the scripts quickly.
+High Processing Computing (HPC) is a way to process data at high speeds.  One way to do this is through computer clustering.  A computer cluster is a group of computers that work together.  The job is sent to the head node, and is distributed among the worker nodes.  It speeds up the processing time because they work in parallel.
+
+<img src ="C:/Users/hart187/OneDrive - PNNL/Documents/cluster.jpg">
+
+Because of the amount of data that needed to be summarized, cluster computing was needed to run the scripts quickly.  The cluster computer I used is called COMPASS.  It is a cluster computer funded by the DOE and has 92 compute nodes and 384 GB of RAM.
 
 To run the scripts on the cluster, we used SLURM, also known as Simple Linux Utility for Resource Management.  SLURM is used to schedule and allocate resources for jobs run on computer clusters.  I wrote a slurm script to call the send_dir_path function.  Each directory instance is run on a separate node in parallel.
 
+```{r chunk, results='hide'}
+"cd /compass/fme200002/ahart/COMPASS-sensor-data
+EXAMPLE_SCRIPT='/compass/fme200002/ahart/COMPASS-sensor-data/qaqc_compass.R'
+srun Rscript $EXAMPLE_SCRIPT $SLURM_ARRAY_TASK_ID"
 
-- **NO FIGURES YET**
-- **ADD MORE**
+```
+
+Above is a portion of the slurm script I used to run my code on the HPC.  The first line of code takes us to the `COMPASS-sensor-data` directory, where my R scripts are held.  The second line of code assigns `qaqc_compass.R` to the variable `EXAMPLE_SCRIPT` which is then run in the following line.
 
 ### Summarizing script
 During my internship, I used two R scripts to process the data.  The first script, called `send_dir_path`, sends each CSV file in a folder to a second script called `compute_na_sd`.  This script summarizes the data by grouping data points of the same date and research name.  The data is then summarized into the following columns: 
@@ -70,9 +79,20 @@ Column          | Description
 `n_NA`          | number of data sensors of the same date and research_name missing a value
 `pct_NA`        | percentage of data sensors of the same date and research_name missing a value
 
-The new data frame is then returned to `send_dir_path`.  Once all the data frames created from the folder are returned, they are combined and exported into a new csv file.
+The new data frame is then returned to `send_dir_path`.  Once all the data frames created from the folder are returned, they are combined and exported into a new csv file.  Below is  the portion of `compute_na_sd` that creates the summarized dataframe.
 
-- **NO FIGURES YET**
+```{r summarize, results='hide'}
+"fileData %>% 
+    group_by(research_name, date) %>%
+    reframe(n_NA = sum(is.na(Value)),
+    average = mean(Value, na.rm = TRUE),
+    stdev = sd(Value, na.rm = TRUE),
+  	mad=mad(Value, na.rm=TRUE),
+  	site=Site,
+    plot=if(is.logical(Plot)) {substring(filename,5,5)} else{Plot},
+    pct_NA = n_NA/(sum(!is.na(ID))), .groups='drop') %>% 
+  return()"
+```
 
 ## Post-Processing {.tabset}
 The purpose of the post-processing scripts is to help visualize the summarized data.  We can see trends and unexpected results.  There are four types of graphs, shown in the tabs below.  The graphs are made using two R functions, `post_process_main` and `post_process`.  `post_process_main` takes the folders holding all the files with summarized data and sends them to `post_process`.  The post_process function then reads the CSV file and makes the graphs.  There is one of each type of graph for every research_name and year.
