@@ -97,13 +97,6 @@ The new data frame is then returned to `send_dir_path`.  Once all the data frame
 ## Post-Processing {.tabset}
 The purpose of the post-processing scripts is to help visualize the summarized data.  We can see trends and unexpected results.  There are four types of graphs, shown in the tabs below.  The graphs are made using two R functions, `post_process_main` and `post_process`.  `post_process_main` takes the folders holding all the files with summarized data and sends them to `post_process`.  The post_process function then reads the CSV file and makes the graphs.  There is one of each type of graph for every research_name and year.
 
-----------
-For the graphs 
-vvvv
-CRC 2022 gw_act_cond
-PTR 2023 gw_temperature
-----------
-
 ### Average
 The average graph shows the average value of the data points of the same date and plot, using `geom_smooth`.  `geom_smooth` is very similar to a line of best fit, but it curves with the data.
 
@@ -123,7 +116,7 @@ b %>% ggplot(aes(date,average, na.rm = TRUE, color = factor(plot))) +
 ```
 
 
- **Super bad explaination, need to think abotu how to word it**
+- **Super bad explaination, need to think abotu how to word it**
 - Explain setup of graphs (split by plot and geom_smooth)
 
 ### Median Stardard Deviation
@@ -134,22 +127,23 @@ Additionally, these graphs highlight outliers, with a function I made called `ou
 ```{r mad, echo=FALSE,fig.width=4, fig.show='hold', warning = FALSE, message=FALSE}
 library(ggplot2)
 library(dbplyr)
+library(tidyr)
 source("~/GitHub/COMPASS-sensor-data/post_process.R")
 
 a <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/crc2022.csv")
 b <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/ptr2023.csv")
 
 a$week <- cut.Date(a$date, breaks = "1 week", labels = FALSE)
-#a_mad <- a %>% filter(!is.na(mad))
-#a_mad$outlier <- outlier(a_mad)
+a_mad <- drop_na(a, mad)
+a_mad$outlier <- outlier(a_mad)
 
 b$week <- cut.Date(b$date, breaks = "1 week", labels = FALSE)
-#b_mad <- b %>% filter(!is.na(mad))
-#b_mad$outlier <- outlier(b_mad)
+b_mad <- drop_na(b, mad)
+b_mad$outlier <- outlier(b_mad)
 
-#a_mad %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + geom_point() + scale_y_continuous(name="emdian absolute deviation") + ggtitle(paste('CRC','2022','gw_act_cond')) + labs(color = "Outliers") 
+a_mad %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + geom_point() + scale_y_continuous(name="median absolute deviation") + ggtitle(paste('CRC','2022','gw_act_cond')) + labs(color = "Outliers") 
 
-#b_mad %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + geom_point() + scale_y_continuous(name="emdian absolute deviation") + ggtitle(paste('PTR','2023','gw_temperature')) + labs(color = "Outliers") 
+b_mad %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + geom_point() + scale_y_continuous(name="median absolute deviation") + ggtitle(paste('PTR','2023','gw_temperature')) + labs(color = "Outliers") 
 ```
 
 - **Maybe show some of the outlier code??**
@@ -200,9 +194,13 @@ b %>% ggplot(aes(date,stdev, na.rm = TRUE, color = factor(plot))) +
 ## Conclusion
 
 ### Lessons Learned
--Talked about learning compass
--learning R and slurm
+- Talked about learning compass
+- learning R and slurm
+- mention DOE
 
 ### Improvements/Uses
--Improvements
--Uses
+- Still a large amount of data
+- The summary could be altered to provide more useful data points
+- Availability of results
+- Provides a good summary of the data that is more manageable
+- Plots allows us to see trends
