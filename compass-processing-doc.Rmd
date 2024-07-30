@@ -95,10 +95,10 @@ The new data frame is then returned to `send_dir_path`.  Once all the data frame
 ```
 
 ## Post-Processing {.tabset}
-The purpose of the post-processing scripts is to help visualize the summarized data.  We can see trends and unexpected results.  There are four types of graphs, shown in the tabs below.  The graphs are made using two R functions, `post_process_main` and `post_process`.  `post_process_main` takes the folders holding all the files with summarized data and sends them to `post_process`.  The post_process function then reads the CSV file and makes the graphs.  There is one of each type of graph for every research_name and year.
+The purpose of the post-processing scripts is to help visualize the summarized data.  We can see trends and unexpected results.  There are four types of graphs, shown in the tabs below.  The graphs are made using two R functions, `post_process_main` and `post_process`.  `post_process_main` takes the folder holding all the files with summarized data and sends them to `post_process`.  The `post_process` function reads each CSV file and makes a data frame.  The data frame is then split into a list of data frames by their research name column, and one of each of the four graphs is made for each data frame in the list.  There is one of each type of graph for every research name, site, and year.
 
 ### Average
-The average graph shows the average value of the data points of the same date and plot, using `geom_smooth`.  `geom_smooth` is very similar to a line of best fit, but it curves with the data.
+The average graph shows the average value of the data points using a curved line of best fit.  There is a line of best fit for each plot to show how the data differs among plots.
 
 ```{r average, echo=FALSE,fig.width=4, fig.show='hold', warning = FALSE, message=FALSE}
 library(ggplot2)
@@ -115,13 +115,9 @@ b %>% ggplot(aes(date,average, na.rm = TRUE, color = factor(plot))) +
       labs(color = "Plot") 
 ```
 
-
-- **Super bad explaination, need to think abotu how to word it**
-- Explain setup of graphs (split by plot and geom_smooth)
-
 ### Median Stardard Deviation
-Median standard deviation is a way to see how spread out a set of data is.  This measurement is useful because it allows us to see if the data points are consistent among the sensors.  These graphs show the median standard deviation of all the plots in a site for the year.
-Additionally, these graphs highlight outliers, with a function I made called `outlier`.  `outlier` highlights any data points in the graph that are higher than the 95 percent tile, and lower than the 5 percent tile per week.  It is done per week to ensure seasonal changes don't effect the results.
+Median standard deviation is a way to see the range of a set of data.  This measurement is beneficial because it allows us to see if the data points are consistent among the sensors.  These graphs show the median standard deviation of all the plots in a site for the year.
+Additionally, these graphs highlight outliers, with a function I made called `outlier`.  `outlier` highlights any data points in the graph that are higher than the 95 percent tile and lower than the 5 percent tile per week.  It is done per week to ensure seasonal changes don't affect the results.
 
 
 ```{r mad, echo=FALSE,fig.width=4, fig.show='hold', warning = FALSE, message=FALSE}
@@ -146,13 +142,8 @@ a_mad %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + geom_po
 b_mad %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + geom_point() + scale_y_continuous(name="median absolute deviation") + ggtitle(paste('PTR','2023','gw_temperature')) + labs(color = "Outliers") 
 ```
 
-- **Maybe show some of the outlier code??**
-- **needs editing**
-- Explain what mad is
-- explain setup and outliers function
-
 ### Percentage of NA
-The percentage of NA graphs show the percentage of NA values for group of data sensors using bars.  While this may not seem like a useful graph, it is very helpful in showing where data was lost.
+The percentage of NA graph shows the percentage of columns that have a missing value (NA).   While this may not seem like a useful graph, it helps show where data was lost.  To further show where data was lost, the bars are separated by plot.
 
 ```{r pct_na, echo=FALSE,fig.width=4, fig.show='hold', warning = FALSE, message=FALSE}
 library(ggplot2)
@@ -169,12 +160,9 @@ b %>% ggplot(aes(date,pct_NA, na.rm = TRUE)) +
 
 ```
 
-- explain the reason for computing this
-- setup
-
 ### Standard Deviation
 
-- explain setup
+The standard deviation graph shows the standard deviation of each type of sensor for each plot.  Lines connect the points to help better show the difference in ranges among the plots.
 
 ```{r stdev, echo=FALSE,fig.width=4, fig.show='hold', warning = FALSE, message=FALSE}
 library(ggplot2)
