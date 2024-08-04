@@ -79,7 +79,7 @@ Column          | Description
 `n_NA`          | number of data sensors of the same date and research_name missing a value
 `pct_NA`        | percentage of data sensors of the same date and research_name missing a value
 
-The new data frame is then returned to `send_dir_path`.  Once all the data frames created from the folder are returned, they are combined and exported into a new csv file.  Below is  the portion of `compute_na_sd` that creates the summarized dataframe.
+The new data frame is then returned to `send_dir_path`.  Once all the data frames created from the folder are returned, they are combined and exported into a new csv file.  Below is  the portion of `compute_na_sd` that creates the summarized data frame.
 
 ```{r summarize, results='hide'}
 "fileData %>% 
@@ -180,7 +180,7 @@ b %>% ggplot(aes(date,stdev, na.rm = TRUE, color = factor(plot))) +
 ```
 
 ## Conclusion
-This work was supported the sponsered by the Department of Energy.  The GitHub link to all the scripts is here: [GitHub Link](https://github.com/w-alanna/COMPASS-sensor-data).
+This work was supported the sponsored by the Department of Energy.  The GitHub link to all the scripts is here: [GitHub Link](https://github.com/w-alanna/COMPASS-sensor-data).
 
 ### Lessons Learned
 Over the course of creating these scripts, I learned several things.  I learned about high performance computing, how to use COMPASS, R and slurm.  It was a steep learning curve, and I look forward to taking what I learned with me to college.
@@ -188,3 +188,4 @@ Over the course of creating these scripts, I learned several things.  I learned 
 ### Improvements/Uses
 The summarized version of the data is still extensive, and the summary could be altered to provide more useful data points.  Additionally, there are ways to make the results more available as well.  Despite this, the summarizing scripts give a good summary of the data and condense the data to a more manageable size.  Additionally, the graphs allow us to see trends and unexpected results in the data.  
 
+<img src ="C:/Users/hart187/OneDrive - PNNL/Documents/improve.jpg">
