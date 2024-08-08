@@ -27,7 +27,9 @@ In addition to multiple sites, COMPASS-FME uses multiple data sensors.  The sens
 - Vegetation (sapflow, etc)
 
 ### Data
-COMPASS-FME generates over 3 million data points per month.  That is a **lot** of data.  The data is stored in folders separated by site and year.  Within these folders, there are several csv files holding the data.  The v1 version, the version the processing process is tailored to, has 12 columns.  The columns needed for processing are: 
+COMPASS-FME generates over 3 million data points per month.  That is a **lot** of data.  This is an issue because it negatively impacts qaqc, also known as quality insurance and quality control.  With poor qaqc, the data is less useful for its users and makes it difficult to manage.  This made me want to summarize the data to provide a smaller data set and increase the qaqc.
+
+The data is stored in folders separated by site and year.  Within these folders, there are several csv files holding the data.  The v1 version, the version the processing process is tailored to, has 12 columns.  The columns needed for processing are: 
 
 Column              | Description
 --------------------|----------------
@@ -52,7 +54,7 @@ High Processing Computing (HPC) is a way to process data at high speeds.  One wa
 
 <img src ="C:/Users/hart187/OneDrive - PNNL/Documents/cluster.jpg">
 
-Because of the amount of data that needed to be summarized, cluster computing was needed to run the scripts quickly.  The cluster computer I used is called COMPASS.  It is a cluster computer funded by the DOE and has 92 compute nodes and 384 GB of RAM.
+Because of the amount of data that needed to be summarized, cluster computing was needed to run the scripts quickly.  The cluster computer I used is called COMPASS.  It is a cluster computer funded by the DOE and has 92 compute nodes and each compute node has 384 GB of RAM.
 
 To run the scripts on the cluster, we used SLURM, also known as Simple Linux Utility for Resource Management.  SLURM is used to schedule and allocate resources for jobs run on computer clusters.  I wrote a slurm script to call the send_dir_path function.  Each directory instance is run on a separate node in parallel.
 
@@ -180,12 +182,19 @@ b %>% ggplot(aes(date,stdev, na.rm = TRUE, color = factor(plot))) +
 ```
 
 ## Conclusion
-This work was supported the sponsored by the Department of Energy.  The GitHub link to all the scripts is here: [GitHub Link](https://github.com/w-alanna/COMPASS-sensor-data).
-
-### Lessons Learned
-Over the course of creating these scripts, I learned several things.  I learned about high performance computing, how to use COMPASS, R and slurm.  It was a steep learning curve, and I look forward to taking what I learned with me to college.
 
 ### Improvements/Uses
 The summarized version of the data is still extensive, and the summary could be altered to provide more useful data points.  Additionally, there are ways to make the results more available as well.  Despite this, the summarizing scripts give a good summary of the data and condense the data to a more manageable size.  Additionally, the graphs allow us to see trends and unexpected results in the data.  
 
 <img src ="C:/Users/hart187/OneDrive - PNNL/Documents/improve.jpg">
+
+### Lessons Learned
+Over the course of creating these scripts, I learned several things.  I learned about high performance computing, how to use COMPASS, R, and slurm.  It was a steep learning curve, and I look forward to taking what I learned with me to college.
+
+
+
+
+
+
+
+This work was supported and sponsored by the Department of Energy.  The GitHub link to all the scripts is here: [GitHub Link](https://github.com/w-alanna/COMPASS-sensor-data).
