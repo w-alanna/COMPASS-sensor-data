@@ -74,7 +74,7 @@ Column          | Description
 ----------------|----------------------
 `research_name` | Name of the sensor
 `site`          | Abbreviation of the site the sensor is located
-`date`          | date and time the data was recorded
+`date`          | date the data was recorded
 `average`       | average value of data sensors of the same date and research_name
 `mad`           | median standard deviation of data sensors of the same date and research_name
 `stdev`         | standard deviation of data sensors of the same date and research_name
