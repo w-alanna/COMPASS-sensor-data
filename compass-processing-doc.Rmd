@@ -1,0 +1,200 @@
+---
+title: "Processing of COMPASS-FME Data"
+author: "A Hart"
+date: "2024-07-23"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Background
+### COMPASS-FME Overview
+COMPASS-FME is a project studying how coastal ecosystems respond to stress from rising sea levels and storm surges.  The project collects data from seven different sites in the Chesapeake Bay and Western Lake Erie Basin.  The sites all have differing salinity levels and soil types, so the project has a range of ecosystems.  Each site has three plots: upland, transition zone, and wetland area.
+
+<img src ="C:/Users/hart187/OneDrive - PNNL/Documents/compass-sites.png">
+
+In addition to multiple sites, COMPASS-FME uses multiple data sensors.  The sensors fall into one of the following: 
+
+- Weather (rain, temperature, etc)
+- Soil (soil electrical conductivity, soil temperature, etc)
+- Open Soil (water pressure, water salinity, etc)
+- Ground Water (groundwater salinity, groundwater density, etc)
+- Vegetation (sapflow, etc)
+
+### Data
+COMPASS-FME generates over 3 million data points per month.  That is a **lot** of data.  This is an issue because it negatively impacts qaqc, also known as quality insurance and quality control.  With poor qaqc, the data is less useful for its users and makes it difficult to manage.  This made me want to summarize the data to provide a smaller data set and increase the qaqc.
+
+The data is stored in folders separated by site and year.  Within these folders, there are several csv files holding the data.  The v1 version, the version the processing process is tailored to, has 12 columns.  The columns needed for processing are: 
+
+Column              | Description
+--------------------|----------------
+`Site`              | Abbreviation of one of the seven sites
+`Plot`              | Abbreviation of one plots for a site
+`TIMESTAMP`         | date and time
+`Value`             | value the sensor collects
+`research_name`     | name of sensor
+
+```{r v1 data, echo = FALSE, message=FALSE, warning = FALSE}
+library(readr)
+b <- read_csv("C:/Users/hart187/COMPASS_folders/CRC_2022/CRC_TR_20220401-20220430_L1_v1-0.csv", show_col_types = FALSE)
+
+knitr::kable(head(b))
+```
+
+## Processing
+Due to the large amount of data COMPASS-FME generates, it can be tough to handle all at once.  Using the HPC and R scripts, we can summarize the COMPASS-FME data to a more manageable size.
+
+### HPC
+High Processing Computing (HPC) is a way to process data at high speeds.  One way to do this is through computer clustering.  A computer cluster is a group of computers that work together.  The job is sent to the head node, and is distributed among the worker nodes.  It speeds up the processing time because they work in parallel.
+
+<img src ="C:/Users/hart187/OneDrive - PNNL/Documents/cluster.jpg">
+
+Because of the amount of data that needed to be summarized, cluster computing was needed to run the scripts quickly.  The cluster computer I used is called COMPASS.  It is a cluster computer funded by the DOE and has 92 compute nodes and each compute node has 384 GB of RAM.
+
+To run the scripts on the cluster, we used SLURM, also known as Simple Linux Utility for Resource Management.  SLURM is used to schedule and allocate resources for jobs run on computer clusters.  I wrote a slurm script to call the send_dir_path function.  Each directory instance is run on a separate node in parallel.
+
+```{r chunk, results='hide'}
+"cd /compass/fme200002/ahart/COMPASS-sensor-data
+EXAMPLE_SCRIPT='/compass/fme200002/ahart/COMPASS-sensor-data/qaqc_compass.R'
+srun Rscript $EXAMPLE_SCRIPT $SLURM_ARRAY_TASK_ID"
+
+```
+
+Above is a portion of the slurm script I used to run my code on the HPC.  The first line of code takes us to the `COMPASS-sensor-data` directory, where my R scripts are held.  The second line of code assigns `qaqc_compass.R` to the variable `EXAMPLE_SCRIPT` which is then run in the following line.
+
+### Summarizing script
+During my internship, I used two R scripts to process the data.  The first script, called `send_dir_path`, sends each CSV file in a folder to a second script called `compute_na_sd`.  This script summarizes the data by grouping data points of the same date and research name.  The data is then summarized into the following columns: 
+
+Column          | Description
+----------------|----------------------
+`research_name` | Name of the sensor
+`site`          | Abbreviation of the site the sensor is located
+`date`          | date the data was recorded
+`average`       | average value of data sensors of the same date and research_name
+`mad`           | median standard deviation of data sensors of the same date and research_name
+`stdev`         | standard deviation of data sensors of the same date and research_name
+`n_NA`          | number of data sensors of the same date and research_name missing a value
+`pct_NA`        | percentage of data sensors of the same date and research_name missing a value
+
+The new data frame is then returned to `send_dir_path`.  Once all the data frames created from the folder are returned, they are combined and exported into a new csv file.  Below is  the portion of `compute_na_sd` that creates the summarized data frame.
+
+```{r summarize, results='hide'}
+"fileData %>% 
+    group_by(research_name, date) %>%
+    reframe(n_NA = sum(is.na(Value)),
+    average = mean(Value, na.rm = TRUE),
+    stdev = sd(Value, na.rm = TRUE),
+  	mad=mad(Value, na.rm=TRUE),
+  	site=Site,
+    plot=if(is.logical(Plot)) {substring(filename,5,5)} else{Plot},
+    pct_NA = n_NA/(sum(!is.na(ID))), .groups='drop') %>% 
+  return()"
+```
+
+## Post-Processing {.tabset}
+The purpose of the post-processing scripts is to help visualize the summarized data.  We can see trends and unexpected results.  There are four types of graphs, shown in the tabs below.  The graphs are made using two R functions, `post_process_main` and `post_process`.  `post_process_main` takes the folder holding all the files with summarized data and sends them to `post_process`.  The `post_process` function reads each CSV file and makes a data frame.  The data frame is then split into a list of data frames by their research name column, and one of each of the four graphs is made for each data frame in the list.  There is one of each type of graph for every research name, site, and year.
+
+### Average
+The average graph shows the average value of the data points using a curved line of best fit.  There is a line of best fit for each plot to show how the data differs among plots.
+
+```{r average, echo=FALSE,fig.width=4, fig.show='hold', warning = FALSE, message=FALSE}
+library(ggplot2)
+library(dbplyr)
+
+a <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/crc2022.csv")
+b <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/ptr2023.csv")
+
+a %>% ggplot(aes(date,average, na.rm = TRUE, color = factor(plot))) +
+      geom_smooth() + ggtitle(paste('CRC','2022','gw_act_cond')) + 
+      labs(color = "Plot") 
+b %>% ggplot(aes(date,average, na.rm = TRUE, color = factor(plot))) +
+      geom_smooth() + ggtitle(paste('PTR','2023','gw_temperature')) + 
+      labs(color = "Plot") 
+```
+
+### Median Stardard Deviation
+Median standard deviation is a way to see the range of a set of data.  This measurement is beneficial because it allows us to see if the data points are consistent among the sensors.  These graphs show the median standard deviation of all the plots in a site for the year.
+Additionally, these graphs highlight outliers, with a function I made called `outlier`.  `outlier` highlights any data points in the graph that are higher than the 95 percent tile and lower than the 5 percent tile per week.  It is done per week to ensure seasonal changes don't affect the results.
+
+
+```{r mad, echo=FALSE,fig.width=4, fig.show='hold', warning = FALSE, message=FALSE}
+library(ggplot2)
+library(dbplyr)
+library(tidyr)
+source("~/GitHub/COMPASS-sensor-data/post_process.R")
+
+a <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/crc2022.csv")
+b <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/ptr2023.csv")
+
+a$week <- cut.Date(a$date, breaks = "1 week", labels = FALSE)
+a_mad <- drop_na(a, mad)
+a_mad$outlier <- outlier(a_mad)
+
+b$week <- cut.Date(b$date, breaks = "1 week", labels = FALSE)
+b_mad <- drop_na(b, mad)
+b_mad$outlier <- outlier(b_mad)
+
+a_mad %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + geom_point() + scale_y_continuous(name="median absolute deviation") + ggtitle(paste('CRC','2022','gw_act_cond')) + labs(color = "Outliers") 
+
+b_mad %>% ggplot(aes(date,mad, na.rm = TRUE, color = factor(outlier))) + geom_point() + scale_y_continuous(name="median absolute deviation") + ggtitle(paste('PTR','2023','gw_temperature')) + labs(color = "Outliers") 
+```
+
+### Percentage of NA
+The percentage of NA graph shows the percentage of columns that have a missing value (NA).   While this may not seem like a useful graph, it helps show where data was lost.  To further show where data was lost, the bars are separated by plot.
+
+```{r pct_na, echo=FALSE,fig.width=4, fig.show='hold', warning = FALSE, message=FALSE}
+library(ggplot2)
+library(dbplyr)
+
+a <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/crc2022.csv")
+b <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/ptr2023.csv")
+
+a %>% ggplot(aes(date,pct_NA, na.rm = TRUE)) + 
+      geom_bar(stat = "identity") + facet_wrap(vars(plot)) +  ggtitle(paste('CRC','2022','gw_act_cond')) + labs(color = "Plot") 
+
+b %>% ggplot(aes(date,pct_NA, na.rm = TRUE)) + 
+      geom_bar(stat = "identity") + facet_wrap(vars(plot)) + ggtitle(paste('PTR','2023','gw_temperature')) + labs(color = "Plot") 
+
+```
+
+### Standard Deviation
+
+The standard deviation graph shows the standard deviation of each type of sensor for each plot.  Lines connect the points to help better show the difference in ranges among the plots.
+
+```{r stdev, echo=FALSE,fig.width=4, fig.show='hold', warning = FALSE, message=FALSE}
+library(ggplot2)
+library(dbplyr)
+
+a <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/crc2022.csv")
+b <- read_csv("C:/Users/hart187/OneDrive - PNNL/Documents/ptr2023.csv")
+
+a %>% ggplot(aes(date,stdev, na.rm = TRUE, color = factor(plot))) + 
+  geom_line() + scale_y_continuous(name="standard deviation") + ggtitle(paste('CRC','2022','gw_act_cond')) + labs(color = "Plot") 
+
+b %>% ggplot(aes(date,stdev, na.rm = TRUE, color = factor(plot))) + 
+  geom_line() + scale_y_continuous(name="standard deviation") + ggtitle(paste('PTR','2023','gw_temperature')) + labs(color = "Plot") 
+
+```
+
+## Conclusion
+
+### Improvements/Uses
+The summarized version of the data is still extensive, and the summary could be altered to provide more useful data points.  Additionally, there are ways to make the results more available as well.  Despite this, the summarizing scripts give a good summary of the data and condense the data to a more manageable size.  Additionally, the graphs allow us to see trends and unexpected results in the data.  
+
+<img src ="C:/Users/hart187/OneDrive - PNNL/Documents/improve.jpg">
+
+### Lessons Learned
+Over the course of creating these scripts, I learned several things.  I learned about high performance computing, how to use COMPASS, R, and slurm.  It was a steep learning curve, and I look forward to taking what I learned with me to college.
+
+
+
+
+
+
+
+This work was supported and sponsored by the Department of Energy.  The GitHub link to all the scripts is here: [GitHub Link](https://github.com/w-alanna/COMPASS-sensor-data).

@@ -1,6 +1,7 @@
 library(ggplot2)
 library(dbplyr)
 library(readr)
+library(tidyr)
 
 #Script that will create graphs using processed data
 post_process <- function(filename) {
@@ -28,7 +29,7 @@ post_process <- function(filename) {
       warning("Skipping", rn) #research names with no points are not plotted
       next
     }
-    rn_mad <- rn %>% filter(!is.na(mad))
+    rn_mad <-drop_na(rn, mad)
     #uses outlier to highlight outliers in plots
     rn_mad$outlier <- outlier(rn_mad)
     #mad and outliers
